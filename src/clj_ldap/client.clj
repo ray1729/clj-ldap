@@ -200,7 +200,7 @@
   (cond
     (coll? values)    (Modification. modify-op attribute (into-array values))
     (= :all values)   (Modification. modify-op attribute)
-    :else             (Modification. modify-op attribute (str values))))
+    :else             (Modification. modify-op attribute values)))
 
 (defn- modify-ops
   "Returns a sequence of Modification objects to do the given operation
