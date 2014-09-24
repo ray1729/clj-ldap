@@ -24,3 +24,11 @@
         num-sub-authorities (int (aget s 1))]
     (str "S-" version "-" (authority s) "-"
          (str/join "-" (map (partial sub-authority s) (range num-sub-authorities))))))
+
+(defn gid-from-object-sid
+  "When an object represents a group, the last component of objectSID encodes the GID
+   that should be the primaryGroupID of users in that group."
+  [s]
+  (let [s (if (string? s) (Base64/decode s) s)
+        n (int (aget s 1))]
+    (sub-authority s (dec n))))
