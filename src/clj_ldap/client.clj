@@ -194,13 +194,28 @@
   (doseq [[k v] m]
     (set-entry-kv! entry-obj k v)))
 
+(defn- byte-array?
+  [v]
+  (= (type v) (type (byte-array 0))))
+
 (defn- create-modification
   "Creates a modification object"
   [modify-op attribute values]
   (cond
-    (coll? values)    (Modification. modify-op attribute (into-array values))
-    (= :all values)   (Modification. modify-op attribute)
-    :else             (Modification. modify-op attribute values)))
+   (and (coll? values) (byte-array? (first values)))
+   (Modification. modify-op attribute (into-array values))
+
+   (coll? values)
+   (Modification. modify-op attribute (into-array String (map str values)))
+
+   (= :all values)
+   (Modification. modify-op attribute)
+
+   (byte-array? values)
+   (Modification. modify-op attribute values)
+
+   :else
+   (Modification. modify-op attribute (str values))))
 
 (defn- modify-ops
   "Returns a sequence of Modification objects to do the given operation
